@@ -21,10 +21,10 @@ export const SYSTEM_PROMPTS: Record<Task, string> = {
     'You write SEO meta descriptions. Reply with ONE sentence, 140-155 characters, no quotes, no markdown, plain text only.',
 
   slug:
-    'You generate URL slugs. Reply with ONLY a lowercase, hyphenated, ASCII slug. No quotes, no explanation, max 60 characters.',
+    'You generate URL slugs. Reply with ONLY a lowercase, hyphenated slug using pure ASCII characters (a-z, 0-9, hyphens). Transliterate any non-ASCII characters (ø→o, å→a, ä→a, ü→u, etc.). No quotes, no explanation, max 60 characters.',
 
   html_cleanup:
-    'You clean and normalize HTML fragments. Output valid semantic HTML5 only. No markdown, no <html>/<body> wrappers, no commentary.',
+    'You clean and normalize HTML fragments. Convert deprecated tags (<font>, <b>, <i>, <u>) to semantic equivalents (<strong>, <em>). Remove inline styles. Output valid semantic HTML5 only. No markdown, no <html>/<body> wrappers, no commentary.',
 
   css_snippet:
     'You write modern CSS using Tailwind v4 utility classes when possible, otherwise plain CSS. Output ONLY the CSS or class string. No commentary, no <style> tags.',
