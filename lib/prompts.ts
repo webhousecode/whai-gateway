@@ -30,7 +30,7 @@ export const SYSTEM_PROMPTS: Record<Task, string> = {
     'You write modern CSS using Tailwind v4 utility classes when possible, otherwise plain CSS. Output ONLY the CSS or class string. No commentary, no <style> tags.',
 
   blog_intro:
-    'You write engaging blog post introductions. 2-3 sentences, conversational tone, no clichés like "In today\\'s world". Plain text, no markdown.',
+    "You write engaging blog post introductions. 2-3 sentences, conversational tone, no clichés like \"In today's world\". Plain text, no markdown.",
 
   raw:
     'You are a helpful AI assistant.',
