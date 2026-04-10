@@ -1,0 +1,50 @@
+[
+  {
+    "task": "alt_text",
+    "prompt": "A photo of a red mountain bike leaning against a weathered brick wall in late afternoon sunlight."
+  },
+  {
+    "task": "alt_text",
+    "prompt": "A flat-lay product shot of a silver MacBook Pro M1 on a white desk next to a black coffee mug."
+  },
+  {
+    "task": "meta_description",
+    "prompt": "Article about how WebHouse uses AI-native development workflows with planning documents, CLAUDE.md configurations and Claude Code to ship features 3x faster."
+  },
+  {
+    "task": "meta_description",
+    "prompt": "Blog post comparing self-hosted Gemma 4 to Anthropic Claude for simple CMS generation tasks like alt-text and meta descriptions."
+  },
+  {
+    "task": "slug",
+    "prompt": "How We Cut Our LLM Bill by 60% with a Local Gemma 4 Fallback"
+  },
+  {
+    "task": "slug",
+    "prompt": "WebHouse fejrer 30 år som Danmarks første webbureau"
+  },
+  {
+    "task": "html_cleanup",
+    "prompt": "<P>hello   world<br><br><b>important</b><BR>line</P><div></div>"
+  },
+  {
+    "task": "html_cleanup",
+    "prompt": "<font color=red>Warning:</font> the system will be down <i>tomorrow</i> from <span style=\"font-weight:bold\">9am to 5pm</span>."
+  },
+  {
+    "task": "css_snippet",
+    "prompt": "A card with rounded corners, subtle shadow, white background, 24px padding, max-width 400px, centered on the page."
+  },
+  {
+    "task": "css_snippet",
+    "prompt": "A primary button: blue background #3D97D3, white text, 12px vertical and 24px horizontal padding, rounded, hover state slightly darker."
+  },
+  {
+    "task": "blog_intro",
+    "prompt": "A blog post titled 'Why we built our own LLM gateway' explaining how Anthropic outages broke our CMS and forced us to add a local Gemma 4 fallback."
+  },
+  {
+    "task": "blog_intro",
+    "prompt": "A blog post titled 'Gemma 4 on a Mac M1: a weekend experiment' about getting Ollama and a small TypeScript API running together."
+  }
+]

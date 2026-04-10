@@ -1,0 +1,34 @@
+# Linux / Ubuntu with NVIDIA GPU. Both Ollama and the API run in Docker.
+# Requires NVIDIA Container Toolkit.
+#
+#   docker compose -f docker-compose.linux.yml up --build
+#   docker exec -it whai-ollama ollama pull gemma4:e4b
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: whai-ollama
+    restart: unless-stopped
+    volumes:
+      - ./ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  api:
+    build: .
+    container_name: whai-api
+    restart: unless-stopped
+    ports:
+      - "3399:3399"
+    env_file: .env
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - ollama

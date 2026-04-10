@@ -1,0 +1,22 @@
+# M1 hybrid: Ollama runs natively on the Mac host (brew install ollama)
+# so Metal acceleration is available. Only the API runs in Docker.
+#
+# Start Ollama on the host first:
+#   brew services start ollama
+#   ollama pull gemma4:e4b
+#
+# Then:
+#   docker compose -f docker-compose.m1.yml up --build
+
+services:
+  api:
+    build: .
+    container_name: whai-api
+    restart: unless-stopped
+    ports:
+      - "3399:3399"
+    env_file: .env
+    environment:
+      - OLLAMA_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
