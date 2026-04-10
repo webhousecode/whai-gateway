@@ -1,26 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { requireAuth } from '@/lib/auth';
 import { ollamaChat } from '@/lib/ollama';
 import { SYSTEM_PROMPTS, Task } from '@/lib/prompts';
+import { logRequest, errorBody } from '@/lib/logger';
 
-/**
- * Simplified generate endpoint for CMS task templates.
- * Body: { prompt: string, task?: Task, model?: string, maxTokens?: number }
- * Returns: { text: string, model: string, task: Task }
- */
+const GenerateSchema = z.object({
+  prompt: z.string().min(1),
+  task: z
+    .enum(['alt_text', 'meta_description', 'slug', 'html_cleanup', 'css_snippet', 'blog_intro', 'raw'])
+    .default('raw'),
+  model: z.string().optional(),
+  maxTokens: z.number().int().positive().optional(),
+});
+
 export async function POST(req: NextRequest) {
   const unauth = requireAuth(req);
   if (unauth) return unauth;
 
+  const start = Date.now();
+  const path = req.nextUrl.pathname;
+
+  let parsed: z.infer<typeof GenerateSchema>;
   try {
-    const { prompt, task = 'raw', model, maxTokens } = await req.json();
+    parsed = GenerateSchema.parse(await req.json());
+  } catch (err) {
+    logRequest({ method: 'POST', path, status: 400, latencyMs: Date.now() - start, ts: new Date().toISOString() });
+    return NextResponse.json(errorBody('invalid request body', { code: 'VALIDATION_ERROR', detail: err instanceof z.ZodError ? err.issues : String(err) }), { status: 400 });
+  }
 
-    if (typeof prompt !== 'string' || prompt.length === 0) {
-      return NextResponse.json({ error: 'prompt is required' }, { status: 400 });
-    }
+  const { prompt, task, model, maxTokens } = parsed;
+  const systemPrompt = SYSTEM_PROMPTS[task as Task] ?? SYSTEM_PROMPTS.raw;
 
-    const systemPrompt = SYSTEM_PROMPTS[task as Task] ?? SYSTEM_PROMPTS.raw;
-
+  try {
     const upstream = await ollamaChat({
       model,
       messages: [
@@ -31,13 +43,15 @@ export async function POST(req: NextRequest) {
     });
 
     if (!upstream.ok) {
-      const text = await upstream.text();
-      return NextResponse.json({ error: 'upstream error', detail: text }, { status: 502 });
+      const detail = await upstream.text();
+      logRequest({ method: 'POST', path, status: 502, latencyMs: Date.now() - start, ts: new Date().toISOString() });
+      return NextResponse.json(errorBody('upstream error', { code: 'OLLAMA_ERROR', detail }), { status: 502 });
     }
 
     const json = await upstream.json();
-    const text = json.choices?.[0]?.message?.content ?? '';
+    const text: string = json.choices?.[0]?.message?.content ?? '';
 
+    logRequest({ method: 'POST', path, status: 200, latencyMs: Date.now() - start, ts: new Date().toISOString() });
     return NextResponse.json({
       text: text.trim(),
       model: json.model,
@@ -45,6 +59,7 @@ export async function POST(req: NextRequest) {
       usage: json.usage,
     });
   } catch (err) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    logRequest({ method: 'POST', path, status: 500, latencyMs: Date.now() - start, ts: new Date().toISOString() });
+    return NextResponse.json(errorBody((err as Error).message, { code: 'INTERNAL_ERROR' }), { status: 500 });
   }
 }

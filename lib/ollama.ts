@@ -34,6 +34,7 @@ export async function ollamaChat(opts: ChatOptions): Promise<Response> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(60_000),
   });
 }
 
@@ -42,6 +43,7 @@ export async function ollamaEmbed(input: string, model = 'nomic-embed-text'): Pr
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model, input }),
+    signal: AbortSignal.timeout(60_000),
   });
   if (!r.ok) throw new Error(`ollama embed failed: ${r.status}`);
   const data = await r.json();
